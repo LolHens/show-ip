@@ -10,7 +10,7 @@ name := (ThisBuild / name).value
 lazy val showIp = project.in(file("show-ip"))
   .settings(
     name := "show-ip",
-    version := "0.0.0",
+    version := "0.1.0",
 
     libraryDependencies ++= Seq(
       "ch.qos.logback" % "logback-classic" % "1.2.3",
@@ -23,5 +23,27 @@ lazy val showIp = project.in(file("show-ip"))
       "org.http4s" %% "http4s-circe" % "0.21.0-M5",
       "org.http4s" %% "http4s-scalatags" % "0.21.0-M5",
       "com.lihaoyi" %% "scalatags" % "0.7.0"
-    )
+    ),
+
+    addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1"),
+
+    assembly / assemblyJarName := s"${name.value}-${version.value}.sh.bat",
+
+    assembly / assemblyOption := (assembly / assemblyOption).value
+      .copy(prependShellScript = Some(AssemblyPlugin.defaultUniversalScript(shebang = false))),
+
+    assembly / assemblyMergeStrategy := {
+      case PathList("module-info.class") =>
+        MergeStrategy.discard
+
+      case PathList("META-INF", "jpms.args") =>
+        MergeStrategy.discard
+
+      case PathList("META-INF", "io.netty.versions.properties") =>
+        MergeStrategy.first
+
+      case x =>
+        val oldStrategy = (assembly / assemblyMergeStrategy).value
+        oldStrategy(x)
+    }
   )

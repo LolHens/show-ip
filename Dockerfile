@@ -17,7 +17,8 @@ RUN chmod +x "/usr/local/bin/cleanimage"
 
 RUN mkdir -p $SHOW_IP_HOME \
  && cd $SHOW_IP_HOME \
- && curl -LO $SHOW_IP_URL
+ && curl -LO $SHOW_IP_URL \
+ && chmod +x $SHOW_IP_FILE
 
 
 EXPOSE 8080
